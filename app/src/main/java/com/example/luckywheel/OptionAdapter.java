@@ -44,8 +44,15 @@ public class OptionAdapter extends RecyclerView.Adapter<OptionAdapter.ViewHolder
         Option option = data.get(position);
 
 //        holder.tvItem.setText(data.get(position));
+//        holder.tvItem.setText(
+//                option.getName() + "  (" + option.getWeight() + "%)"
+//        );
         holder.tvItem.setText(
-                option.getName() + "  (" + option.getWeight() + "%)"
+                holder.itemView.getContext().getString(
+                        R.string.option_format,
+                        option.getName(),
+                        option.getWeight()
+                )
         );
         // 設定點擊事件（例如點擊項目進行刪除）
         holder.itemView.setOnClickListener(v -> {
