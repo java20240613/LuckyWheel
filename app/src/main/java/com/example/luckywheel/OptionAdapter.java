@@ -9,7 +9,8 @@ import java.util.List;
 
 public class OptionAdapter extends RecyclerView.Adapter<OptionAdapter.ViewHolder> {
 
-    private List<String> data;
+//    private List<String> data;
+    private List<Option> data;
     private OnItemClickListener listener;
 
     // 定義點擊事件介面
@@ -17,7 +18,7 @@ public class OptionAdapter extends RecyclerView.Adapter<OptionAdapter.ViewHolder
         void onItemClick(int position);
     }
 
-    public OptionAdapter(List<String> data, OnItemClickListener listener) {
+    public OptionAdapter(List<Option> data, OnItemClickListener listener) {
         this.data = data;
         this.listener = listener;
     }
@@ -40,13 +41,23 @@ public class OptionAdapter extends RecyclerView.Adapter<OptionAdapter.ViewHolder
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        holder.tvItem.setText(data.get(position));
+        Option option = data.get(position);
 
+//        holder.tvItem.setText(data.get(position));
+        holder.tvItem.setText(
+                option.getName() + "  (" + option.getWeight() + "%)"
+        );
         // 設定點擊事件（例如點擊項目進行刪除）
         holder.itemView.setOnClickListener(v -> {
-            if (listener != null) {
-                listener.onItemClick(position);
+            int pos = holder.getAbsoluteAdapterPosition();
+
+            if (pos != RecyclerView.NO_POSITION){
+                listener.onItemClick(pos);
             }
+
+//            if (listener != null) {
+//                listener.onItemClick(position);
+//            }
         });
     }
 

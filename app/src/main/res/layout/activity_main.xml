@@ -14,12 +14,29 @@
         android:textSize="22sp"
         android:padding="16dp" />
 
-    <!-- 輸入 -->
-    <EditText
-        android:id="@+id/etInput"
+    <!-- 輸入區塊：名稱與機率並排 -->
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="輸入選項（例如：吃火鍋）" />
+        android:orientation="horizontal"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp">
+
+        <EditText
+            android:id="@+id/etInput"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:hint="輸入選項（例如：吃火鍋）" />
+
+        <EditText
+            android:id="@+id/etWeightInput"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:inputType="number"
+            android:hint="權重/機率" />
+    </LinearLayout>
 
     <!-- 新增按鈕 -->
     <Button

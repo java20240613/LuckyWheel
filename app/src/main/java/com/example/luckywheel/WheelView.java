@@ -13,7 +13,7 @@ import java.util.List;
 
 public class WheelView extends View {
 
-    private List<String> items = new ArrayList<>();
+    private List<Option> items = new ArrayList<>();
     private Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private RectF rectF = new RectF();
     private float centerX;
@@ -45,9 +45,18 @@ public class WheelView extends View {
         borderPaint.setStrokeWidth(6);
     }
 
-    public void setItems(List<String> items) {
+    public void setItems(List<Option> items) {
         this.items = items;
         invalidate();
+    }
+
+    // 計算總權重
+    private float getTotalWeight() {
+        float total = 0;
+        for (Option option : items) {
+            total += option.getWeight();
+        }
+        return total;
     }
 
     @Override
@@ -69,47 +78,16 @@ public class WheelView extends View {
         );
 
         drawWheel(canvas);
-
         drawTexts(canvas);
-
         drawCenter(canvas);
-
-//        int width = getWidth();
-//        int height = getHeight();
-//
-//        float radius = Math.min(width, height) / 2f;
-//
-//        rectF.set(width/2f - radius, height/2f - radius,
-//                width/2f + radius, height/2f + radius);
-//
-//        float sweepAngle = 360f / items.size();
-//        float startAngle = 0;
-//
-//        for (int i = 0; i < items.size(); i++) {
-//
-//            paint.setColor(Color.rgb(
-//                    (i * 50) % 255,
-//                    (i * 80) % 255,
-//                    (i * 120) % 255
-//            ));
-//
-//            canvas.drawArc(rectF, startAngle, sweepAngle, true, paint);
-//
-//            startAngle += sweepAngle;
-//        }
     }
 
     private void drawCenter(Canvas canvas) {
-
         Paint centerPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         centerPaint.setColor(Color.WHITE);
 
-        canvas.drawCircle(
-                centerX,
-                centerY,
-                radius * 0.18f,
-                centerPaint
-        );
+        canvas.drawCircle(centerX, centerY, radius * 0.18f, centerPaint);
+
         Paint textPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         textPaint.setColor(Color.BLACK);
         textPaint.setTextSize(36);
@@ -118,39 +96,33 @@ public class WheelView extends View {
 
         canvas.drawText("Lucky", centerX, centerY - 10, textPaint);
         canvas.drawText("Wheel", centerX, centerY + 40, textPaint);
-
     }
 
     private void drawTexts(Canvas canvas) {
+        float totalWeight = getTotalWeight();
+        if (totalWeight == 0) return;
 
-        float sweepAngle = 360f / items.size();
         float startAngle = 0;
-
         for (int i = 0; i < items.size(); i++) {
-
+            // 依權重比例計算該選項的扇形大小 (Sweep Angle)
+            float sweepAngle = (items.get(i).getWeight() / totalWeight) * 360f;
             float textAngle = startAngle + sweepAngle / 2;
 
             float textRadius = radius * 0.65f;
-
             double radians = Math.toRadians(textAngle);
 
             float x = (float) (centerX + textRadius * Math.cos(radians));
             float y = (float) (centerY + textRadius * Math.sin(radians));
 
             canvas.save();
-
-
-
             float fixAngle = textAngle;
-
-            // 🔥 避免倒著
+            // 避免字體倒過來
             if (fixAngle > 90 && fixAngle < 270) {
                 fixAngle += 180;
             }
-// ⭐ 讓整個畫布轉向該角度
             canvas.rotate(fixAngle, x, y);
-            canvas.drawText(items.get(i), x, y, textPaint);
-
+            // 修正點：使用 items.get(i).getName() 畫出文字
+            canvas.drawText(items.get(i).getName(), x, y, textPaint);
             canvas.restore();
 
             startAngle += sweepAngle;
@@ -158,11 +130,13 @@ public class WheelView extends View {
     }
 
     private void drawWheel(Canvas canvas) {
+        float totalWeight = getTotalWeight();
+        if (totalWeight == 0) return;
 
-        float sweepAngle = 360f / items.size();
         float startAngle = 0;
-
         for (int i = 0; i < items.size(); i++) {
+            // 依權重比例計算該選項的扇形大小
+            float sweepAngle = (items.get(i).getWeight() / totalWeight) * 360f;
 
             paint.setColor(colors[i % colors.length]);
 
